@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المنسق الرقمية التفاعلية - القدرات والتحصيلي</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo & Tajawal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eefcf6',
+                            100: '#d7f7e9',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b'
+                        },
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* الطباعة المحسنة */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+            }
+            .print-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .tab-panel {
+                display: block !important;
+                page-break-after: always;
+                margin-bottom: 2rem;
+            }
+            .print-break-inside-avoid {
+                page-break-inside: avoid;
+            }
+            .print-only {
+                display: block !important;
+            }
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        /* تخصيص أشرطة التمرير للجداول */
+        ::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- شريط الإشعارات المؤقت -->
+    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 transform transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center space-x-3 space-x-reverse border border-slate-700">
+        <i id="toastIcon" class="fa-solid fa-check-circle text-emerald-400 text-xl"></i>
+        <span id="toastMsg" class="font-semibold text-sm">تم الحفظ بنجاح</span>
+    </div>
+
+    <!-- ترويسة الصفحة الرسمية للطباعة -->
+    <header class="print-only border-b-2 border-slate-800 pb-4 mb-6">
+        <div class="flex justify-between items-center text-center">
+            <div class="text-right">
+                <p class="font-bold text-sm">المملكة العربية السعودية</p>
+                <p class="font-bold text-sm">وزارة التعليم</p>
+                <p class="text-xs text-slate-600" id="printSchoolInfo">المدرسة: ثانوية الأندلس النموذجية</p>
+            </div>
+            <div class="text-center">
+                <h1 class="text-xl font-extrabold text-slate-900">سجل ومنصة منسق القدرات والتحصيلي</h1>
+                <p class="text-xs text-slate-600 mt-1">تقرير متابعة وإحصائيات البرامج والنتائج</p>
+            </div>
+            <div class="text-left text-xs text-slate-600">
+                <p>تاريخ التصدير: <span id="printDate"></span></p>
+                <p>العام الدراسي: 1447 - 1448 هـ</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- شريط المهام العلوي للويب -->
+    <nav class="bg-navy-900 text-white shadow-xl sticky top-0 z-40 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- الشعار والعنوان -->
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <div class="w-12 h-12 bg-gradient-to-tr from-brand-600 to-teal-400 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/30 text-white">
+                        <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl font-black tracking-wide text-white">منصة المنسق الرقمية</span>
+                            <span class="bg-brand-500/20 text-brand-300 text-xs px-2.5 py-0.5 rounded-full font-bold border border-brand-500/30">الإصدار التفاعلي 2.0</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5">متابعة اختبارات القدرات العامة والتحصيلي الدراسي</p>
+                    </div>
+                </div>
+
+                <!-- أزرار الإجراءات السريعة (حفظ، طباعة، تصدير، مشاركة) -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <button onclick="saveToStorage()" title="حفظ البيانات محلياً" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-lg text-sm font-semibold flex items-center gap-2 border border-slate-700 transition shadow-sm">
+                        <i class="fa-solid fa-floppy-disk text-emerald-400"></i>
+                        <span class="hidden md:inline">حفظ</span>
+                    </button>
+                    
+                    <button onclick="window.print()" title="طباعة أو تصدير PDF" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-lg text-sm font-semibold flex items-center gap-2 border border-slate-700 transition shadow-sm">
+                        <i class="fa-solid fa-print text-sky-400"></i>
+                        <span class="hidden md:inline">طباعة / PDF</span>
+                    </button>
+
+                    <button onclick="exportJSON()" title="تصدير كملف للنسخ الاحتياطي والمشاركة" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-lg text-sm font-semibold flex items-center gap-2 border border-slate-700 transition shadow-sm">
+                        <i class="fa-solid fa-file-export text-amber-400"></i>
+                        <span class="hidden md:inline">تصدير بيانات</span>
+                    </button>
+
+                    <label title="استيراد بيانات سابقة" class="cursor-pointer px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-lg text-sm font-semibold flex items-center gap-2 border border-slate-700 transition shadow-sm">
+                        <i class="fa-solid fa-file-import text-purple-400"></i>
+                        <span class="hidden md:inline">استيراد</span>
+                        <input type="file" id="importInput" accept=".json" class="hidden" onchange="importJSON(event)">
+                    </label>
+
+                    <button onclick="shareLinkModal()" title="مشاركة الرابط" class="px-4 py-2 bg-gradient-to-r from-brand-600 to-teal-500 hover:from-brand-500 hover:to-teal-400 text-white rounded-lg text-sm font-bold flex items-center gap-2 transition shadow-md shadow-brand-600/30">
+                        <i class="fa-solid fa-share-nodes"></i>
+                        <span>مشاركة</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- الحاوية الأساسية -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- بطاقة معلومات المدرسة والمنسق (قابلة للتعديل المباشر) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 mb-6 print-container">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-id-badge text-brand-600"></i>
+                        <span>بيانات المدرسة والمنسق المعتمد</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">انقر على أي حقل بالأسفل للتعديل الفوري وسيحفظ تلقائياً في السجل</p>
+                </div>
+                <div class="flex items-center gap-2 no-print">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 ml-1.5 animate-pulse"></span>
+                        المزامنة نشطة
+                    </span>
+                    <button onclick="resetDefaultData()" class="text-xs text-rose-500 hover:text-rose-700 underline font-semibold mr-3">استعادة البيانات الافتراضية</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60 focus-within:border-brand-500 transition">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">اسم المدرسة</label>
+                    <input type="text" id="meta_school" oninput="updateMeta()" value="ثانوية الأندلس المتقدمة" class="w-full bg-transparent font-bold text-slate-800 text-sm focus:outline-none">
+                </div>
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60 focus-within:border-brand-500 transition">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">اسم منسق القياس والتحصيل</label>
+                    <input type="text" id="meta_coordinator" oninput="updateMeta()" value="أ. إبراهيم بن فهد السالم" class="w-full bg-transparent font-bold text-slate-800 text-sm focus:outline-none">
+                </div>
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60 focus-within:border-brand-500 transition">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">مدير المدرسة</label>
+                    <input type="text" id="meta_principal" oninput="updateMeta()" value="أ. عبدالله بن سعد الغامدي" class="w-full bg-transparent font-bold text-slate-800 text-sm focus:outline-none">
+                </div>
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60 focus-within:border-brand-500 transition">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">مكتب التعليم / الإدارة</label>
+                    <input type="text" id="meta_office" oninput="updateMeta()" value="مكتب تعليم الروابي - الرياض" class="w-full bg-transparent font-bold text-slate-800 text-sm focus:outline-none">
+                </div>
+            </div>
+        </section>
+
+        <!-- بطاقات المؤشرات الرقمية الحية (Live KPI Cards) -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-400">إجمالي الطلاب المسجلين</p>
+                    <h3 id="kpi_total_students" class="text-2xl font-black text-slate-800 mt-1">0</h3>
+                    <p class="text-[11px] text-emerald-600 font-bold mt-1" id="kpi_reg_ratio">0% مكتمل التسجيل</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-400">متوسط درجات الطلاب</p>
+                    <h3 id="kpi_avg_score" class="text-2xl font-black text-brand-600 mt-1">0%</h3>
+                    <p class="text-[11px] text-slate-500 font-medium mt-1">الاختبار البعدي / المحاكي</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-400">الطلاب تحت الدعم (&lt;65%)</p>
+                    <h3 id="kpi_at_risk" class="text-2xl font-black text-rose-600 mt-1">0</h3>
+                    <p class="text-[11px] text-rose-500 font-semibold mt-1">مشمولون بالخطة العلاجية</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-400">معدل التحسن العام</p>
+                    <h3 id="kpi_improvement" class="text-2xl font-black text-indigo-600 mt-1">+0%</h3>
+                    <p class="text-[11px] text-indigo-500 font-medium mt-1">الفارق بين القبلي والبعدي</p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-arrow-trend-up"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- التبويبات التنقلية -->
+        <div class="border-b border-slate-200 mb-6 no-print">
+            <nav class="flex space-x-2 space-x-reverse overflow-x-auto pb-1" aria-label="Tabs">
+                <button onclick="switchTab('tab_students')" id="btn_tab_students" class="tab-btn active px-4 py-3 text-sm font-bold border-b-2 border-brand-600 text-brand-600 whitespace-nowrap flex items-center gap-2">
+                    <i class="fa-solid fa-user-check"></i>
+                    <span>متابعة التسجيل والحضور</span>
+                </button>
+                <button onclick="switchTab('tab_scores')" id="btn_tab_scores" class="tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2">
+                    <i class="fa-solid fa-square-poll-vertical"></i>
+                    <span>النتائج والقياس القبلي/البعدي</span>
+                </button>
+                <button onclick="switchTab('tab_training')" id="btn_tab_training" class="tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>جدول الحصص والبرامج التدريبية</span>
+                </button>
+                <button onclick="switchTab('tab_remedial')" id="btn_tab_remedial" class="tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <span>الخطة العلاجية (أقل من 65%)</span>
+                </button>
+                <button onclick="switchTab('tab_survey')" id="btn_tab_survey" class="tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 whitespace-nowrap flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-question"></i>
+                    <span>استبانة رضا الطلاب</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- ==================== التبويب 1: متابعة التسجيل والحضور ==================== -->
+        <div id="tab_students" class="tab-panel space-y-4">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-brand-600"></i>
+                            <span>كشف متابعة التسجيل في قياس وحضور الاختبار</span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">يمكنك إضافة طلاب جدد، تعديل الحالات، والتحديث الفوري</p>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto no-print">
+                        <input type="text" id="search_students" oninput="renderStudentsTable()" placeholder="بحث باسم الطالب أو الهوية..." class="text-xs px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-brand-500 w-full sm:w-56">
+                        <button onclick="openAddStudentModal()" class="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm whitespace-nowrap">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span>إضافة طالب</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">#</th>
+                                <th class="p-3">اسم الطالب</th>
+                                <th class="p-3">الصف / المسار</th>
+                                <th class="p-3">رقم الهوية</th>
+                                <th class="p-3">حساب قياس</th>
+                                <th class="p-3">حجز الموعد والسداد</th>
+                                <th class="p-3">تاريخ الاختبار</th>
+                                <th class="p-3">الحضور</th>
+                                <th class="p-3">الدرجة الفعلية</th>
+                                <th class="p-3 no-print">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students_tbody" class="divide-y divide-slate-100">
+                            <!-- يتم البناء بواسطة JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== التبويب 2: النتائج والقياس القبلي/البعدي ==================== -->
+        <div id="tab_scores" class="tab-panel hidden space-y-4">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-simple text-brand-600"></i>
+                            <span>رصد درجات الاختبارات التجريبية (القبلية والبعدية) وحساب الفجوة</span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">يتم احتساب نسبة التحسن وفرز الطلاب تلقائياً وفق أدائهم</p>
+                    </div>
+                    <div class="no-print">
+                        <span class="text-xs text-slate-500 ml-2">انقر على الدرجة للتعديل المباشر</span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">#</th>
+                                <th class="p-3">اسم الطالب</th>
+                                <th class="p-3 text-center">القبلي (كمي/علوم)</th>
+                                <th class="p-3 text-center">القبلي (لفظي/رياضيات)</th>
+                                <th class="p-3 text-center bg-slate-100 font-extrabold">إجمالي القبلي</th>
+                                <th class="p-3 text-center">البعدي (كمي/علوم)</th>
+                                <th class="p-3 text-center">البعدي (لفظي/رياضيات)</th>
+                                <th class="p-3 text-center bg-brand-50 text-brand-800 font-extrabold">إجمالي البعدي</th>
+                                <th class="p-3 text-center">نسبة التحسن</th>
+                                <th class="p-3">المهارات المستهدفة بالعلاج</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scores_tbody" class="divide-y divide-slate-100">
+                            <!-- يتم البناء بواسطة JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== التبويب 3: جدول الحصص والبرامج التدريبية ==================== -->
+        <div id="tab_training" class="tab-panel hidden space-y-6">
+            <!-- جدول القدرات -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-brain text-amber-500"></i>
+                        <span>الخطة الزمنية لتدريب القدرات العامة (الكمي واللفظي)</span>
+                    </h3>
+                    <button onclick="addTrainingRow('qudrat')" class="no-print text-xs font-bold text-brand-600 hover:text-brand-800 flex items-center gap-1">
+                        <i class="fa-solid fa-plus-circle"></i> إضافة موعد
+                    </button>
+                </div>
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-amber-50/50 text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">اليوم والموعد</th>
+                                <th class="p-3">نوع التدريب</th>
+                                <th class="p-3">المهارة والمفاهيم المركّز عليها</th>
+                                <th class="p-3">المعلم المنفذ</th>
+                                <th class="p-3">المخرج والشاهد</th>
+                                <th class="p-3 no-print">حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody id="training_qudrat_tbody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- جدول التحصيلي -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-flask-vial text-sky-600"></i>
+                        <span>الخطة المكثفة للاختبار التحصيلي (المواد العلمية)</span>
+                    </h3>
+                    <button onclick="addTrainingRow('tahsili')" class="no-print text-xs font-bold text-brand-600 hover:text-brand-800 flex items-center gap-1">
+                        <i class="fa-solid fa-plus-circle"></i> إضافة أسبوع
+                    </button>
+                </div>
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-sky-50/50 text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">الأسبوع</th>
+                                <th class="p-3">الرياضيات</th>
+                                <th class="p-3">الفيزياء</th>
+                                <th class="p-3">الكيمياء</th>
+                                <th class="p-3">الأحياء</th>
+                                <th class="p-3">آلية التقييم والمحاكاة</th>
+                                <th class="p-3 no-print">حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody id="training_tahsili_tbody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== التبويب 4: الخطة العلاجية ==================== -->
+        <div id="tab_remedial" class="tab-panel hidden space-y-6">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-kit-medical text-rose-500"></i>
+                            <span>سجل التدخل العلاجي والدعم الفردي (للطلاب دون 65%)</span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">يتم إدراج الطالب ومتابعة الإجراءات المنفذة حتى اجتياز الفجوة</p>
+                    </div>
+                    <button onclick="openAddRemedialModal()" class="no-print px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>إضافة حالة علاجية</span>
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-rose-50/50 text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">اسم الطالب</th>
+                                <th class="p-3">الصف</th>
+                                <th class="p-3">الدرجة السابقة</th>
+                                <th class="p-3">التشخيص (نقطة الضعف)</th>
+                                <th class="p-3">الإجراء العلاجي المتخذ</th>
+                                <th class="p-3">المعلم / الموجه المسؤول</th>
+                                <th class="p-3">الدرجة بعد الدعم</th>
+                                <th class="p-3">الحالة والقرار</th>
+                                <th class="p-3 no-print">إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="remedial_tbody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- مصفوفة استراتيجيات العلاج المعتمدة بالمدرسة -->
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                <h4 class="font-bold text-sm text-slate-800 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-brand-600"></i>
+                    <span>المسارات الأربعة المعتمدة للتدخل السريع بالمدرسة:</span>
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+                        <span class="font-bold text-emerald-700 block mb-1">1. التأسيس المفاهيمي:</span>
+                        <p class="text-slate-600">كراسة القوانين الثابتة، جداول الضرب السريع، واستراتيجيات التجريب والاستبعاد للمسائل الرياضية.</p>
+                    </div>
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+                        <span class="font-bold text-blue-700 block mb-1">2. إدارة زمن السؤال:</span>
+                        <p class="text-slate-600">تدريب عملي بمؤقت رقمي (60 ثانية للسؤال الواحد) لكسر التردد والتغلب على هدر الوقت.</p>
+                    </div>
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+                        <span class="font-bold text-purple-700 block mb-1">3. التعلم بالأقران:</span>
+                        <p class="text-slate-600">دمج الطالب مع زميل متفوق حائز على 90%+ خلال حصص النشاط لحل التجميعات المشتركة.</p>
+                    </div>
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+                        <span class="font-bold text-amber-700 block mb-1">4. الدعم الإرشادي:</span>
+                        <p class="text-slate-600">جلسات تخفيف قلق الاختبار مع الموجّه الطلابي ومتابعة دورية للبيئة المنزلية مع ولي الأمر.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== التبويب 5: استبانة الرضا ==================== -->
+        <div id="tab_survey" class="tab-panel hidden space-y-6">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-square-check text-brand-600"></i>
+                            <span>نتائج تقييم واستبانة رضا الطلاب عن برامج التدريب</span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">يمكن إدخال إجمالي عدد التقييمات لكل بند لحساب مؤشر الرضا الإجمالي آلياً</p>
+                    </div>
+                    <div class="bg-brand-50 text-brand-800 px-4 py-2 rounded-xl text-center border border-brand-200">
+                        <p class="text-[10px] font-bold">مؤشر الرضا العام</p>
+                        <p id="survey_overall_score" class="text-xl font-black">92.4%</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">#</th>
+                                <th class="p-3">محور التقييم</th>
+                                <th class="p-3 text-center">ممتاز (4)</th>
+                                <th class="p-3 text-center">جيد جداً (3)</th>
+                                <th class="p-3 text-center">مقبول (2)</th>
+                                <th class="p-3 text-center">ضعيف (1)</th>
+                                <th class="p-3 text-center font-bold">نسبة التحقق</th>
+                            </tr>
+                        </thead>
+                        <tbody id="survey_tbody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+
+                <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">أبرز مقترحات الطلاب الواردة:</label>
+                        <textarea id="survey_notes" oninput="saveSurveyMeta()" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-500" rows="3" placeholder="مثال: زيادة نماذج تدريب استيعاب المقروء، وتوفير رابط محاكي إلكتروني إضافي..."></textarea>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">أصعب المهارات المطلوبة للدعم المستمر:</label>
+                        <textarea id="survey_difficulties" oninput="saveSurveyMeta()" class="w-full text-xs p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-500" rows="3" placeholder="مثال: المسائل الهندسية ثلاثية الأبعاد، واستيعاب نصوص الفلسفة والعلوم القديمة..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- توقيعات الاعتماد الرسمية عند الطباعة -->
+        <div class="mt-10 pt-6 border-t-2 border-slate-300 print-break-inside-avoid">
+            <div class="grid grid-cols-3 text-center text-xs text-slate-700 font-bold">
+                <div>
+                    <p class="mb-10">منسق القياس والتحصيل بالمدرسة</p>
+                    <p id="sign_coordinator">أ. إبراهيم فهد السالم</p>
+                    <p class="text-[10px] text-slate-400 font-normal">التوقيع: ................................</p>
+                </div>
+                <div>
+                    <p class="mb-10">الموجه الطلابي المختص</p>
+                    <p>أ. محمد بن ناصر القرني</p>
+                    <p class="text-[10px] text-slate-400 font-normal">التوقيع: ................................</p>
+                </div>
+                <div>
+                    <p class="mb-10">يعتمد، مدير المدرسة</p>
+                    <p id="sign_principal">أ. عبدالله سعد الغامدي</p>
+                    <p class="text-[10px] text-slate-400 font-normal">الختم والتوقيع: .........................</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- تذييل الصفحة -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 no-print mt-auto">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span>سجل ومنصة المنسق لمتابعة اختبارات القدرات والتحصيلي © 2026</span>
+            <div class="flex items-center gap-3">
+                <span class="text-emerald-600 font-semibold"><i class="fa-solid fa-lock text-[10px]"></i> البيانات تحفظ تلقائياً في المتصفح</span>
+                <span>•</span>
+                <button onclick="shareLinkModal()" class="text-brand-600 hover:underline">مشاركة المنصة</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== النوافذ المنبثقة (MODALS) ==================== -->
+
+    <!-- نافذة إضافة طالب جديد -->
+    <div id="modal_student" class="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 animate-scaleIn">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+                <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus text-brand-600"></i>
+                    <span>إضافة طالب جديد للمتابعة</span>
+                </h3>
+                <button onclick="closeModal('modal_student')" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+            </div>
+            <form onsubmit="saveNewStudent(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">اسم الطالب الرباعي *</label>
+                    <input type="text" id="stu_name" required class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">الصف والمسار *</label>
+                        <select id="stu_grade" class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-500">
+                            <option>ثاني ثانوي - عام</option>
+                            <option>ثاني ثانوي - علوم حاسب وهندسة</option>
+                            <option>ثاني ثانوي - صحة وحياة</option>
+                            <option>ثالث ثانوي - عام</option>
+                            <option>ثالث ثانوي - علوم حاسب وهندسة</option>
+                            <option>ثالث ثانوي - صحة وحياة</option>
+                            <option>ثاني ثانوي - إدارة أعمال</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">رقم الهوية الوطنية *</label>
+                        <input type="text" id="stu_id" required maxlength="10" placeholder="10xxxxxxxx" class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">حالة فتح الحساب بموقع قياس</label>
+                        <select id="stu_acc_status" class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-500">
+                            <option value="مكتمل">مكتمل</option>
+                            <option value="غير مكتمل">غير مكتمل</option>
+                            <option value="بحاجة مساعدة">بحاجة مساعدة تقنية</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">حالة الحجز والسداد</label>
+                        <select id="stu_booking_status" class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-500">
+                            <option value="مؤكد ومسدد">مؤكد ومسدد</option>
+                            <option value="بانتظار السداد">محجوز وبانتظار السداد</option>
+                            <option value="لم يسجل بعد">لم يسجل بعد</option>
+                            <option value="متعثر مالي">متعثر مالياً (دعم)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">موعد الاختبار المحدد</label>
+                        <input type="date" id="stu_date" class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">حالة الحضور</label>
+                        <select id="stu_attendance" class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-500">
+                            <option value="بانتظار الموعد">بانتظار الموعد</option>
+                            <option value="حاضر">حاضر ومؤدي</option>
+                            <option value="غائب بعذر">غائب بعذر</option>
+                            <option value="غائب بدون عذر">غائب بدون عذر</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">الدرجة الفعلية الرسمية (إن ظهرت)</label>
+                    <input type="number" id="stu_official_score" min="0" max="100" placeholder="اتركه فارغاً إن لم يختبر بعد" class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-brand-500">
+                </div>
+                <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('modal_student')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold">إلغاء</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-bold">إضافة وحفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة حالة علاجية -->
+    <div id="modal_remedial" class="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+                <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-heart-pulse text-rose-600"></i>
+                    <span>إدراج طالب في خطة التدخل العلاجي</span>
+                </h3>
+                <button onclick="closeModal('modal_remedial')" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+            </div>
+            <form onsubmit="saveNewRemedial(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">اسم الطالب *</label>
+                    <input type="text" id="rem_name" required class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-rose-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">الصف والشعبة</label>
+                        <input type="text" id="rem_grade" placeholder="مثال: ثاني ثانوي / 2" required class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-rose-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">الدرجة السابقة *</label>
+                        <input type="number" id="rem_prev_score" min="0" max="100" placeholder="مثال: 58" required class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-rose-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">التشخيص (أبرز فجوة مهارية)</label>
+                    <input type="text" id="rem_weakness" placeholder="مثال: بطء قراءة النصوص واستيعاب المقروء" required class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-rose-500">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">الإجراء التنفيذي المحدد</label>
+                    <select id="rem_action" class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-rose-500">
+                        <option>تأسيس مفاهيمي مكثف + حل بطاقات ورقية يومية</option>
+                        <option>تدريب إدارة الوقت (سؤال في دقيقة مع مؤقت)</option>
+                        <option>التعلم بالأقران مع طالب متفوق خلال حصة النشاط</option>
+                        <option>جلسة إرشادية وتخفيف قلق الاختبار مع الموجه</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">المعلم / الموجه المسؤول</label>
+                        <input type="text" id="rem_teacher" placeholder="اسم المعلم المشرف" required class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-rose-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">الدرجة بعد الدعم (إن وجدت)</label>
+                        <input type="number" id="rem_after_score" min="0" max="100" placeholder="اتركه فارغاً لحين التقييم" class="w-full p-2.5 rounded-lg border border-slate-300 focus:outline-none focus:border-rose-500">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('modal_remedial')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold">إلغاء</button>
+                    <button type="submit" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold">إدراج في الخطة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة المشاركة والنشر -->
+    <div id="modal_share" class="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+                <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-share-nodes text-brand-600"></i>
+                    <span>مشاركة ونشر السجل الرقمي</span>
+                </h3>
+                <button onclick="closeModal('modal_share')" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+            </div>
+            
+            <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+                يمكنك مشاركة هذا الرابط مع إدارة المدرسة، المشرف التربوي، أو فريق العمل للاطلاع والتنسيق المباشر:
+            </p>
+
+            <div class="flex items-center gap-2 mb-4">
+                <input type="text" id="shareUrlInput" readonly class="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-mono select-all">
+                <button onclick="copyShareLink()" class="px-3.5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-lg transition whitespace-nowrap flex items-center gap-1.5">
+                    <i class="fa-solid fa-copy"></i>
+                    <span>نسخ</span>
+                </button>
+            </div>
+
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-[11px] text-emerald-800 flex items-start gap-2">
+                <i class="fa-solid fa-circle-info text-emerald-600 mt-0.5"></i>
+                <span><strong>نصيحة للمشاركة:</strong> يمكنك أيضاً الضغط على زر <strong>"تصدير بيانات"</strong> وإرسال ملف JSON لزملائك ليقوموا برفعه عبر زر <strong>"استيراد"</strong> والعمل على نفس البيانات تماماً.</span>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-100 flex justify-end">
+                <button onclick="closeModal('modal_share')" class="px-4 py-2 bg-slate-800 text-white rounded-lg text-xs font-bold">تم</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== منطق جافاسكريبت التفاعلي الكامل ==================== -->
+    <script>
+        // مفتاح التخزين المحلي
+        const STORAGE_KEY = 'coordinator_dashboard_v2_data';
+
+        // البيانات الافتراضية الأولية
+        const defaultAppData = {
+            meta: {
+                school: "ثانوية الأندلس المتقدمة",
+                coordinator: "أ. إبراهيم بن فهد السالم",
+                principal: "أ. عبدالله بن سعد الغامدي",
+                office: "مكتب تعليم الروابي - الرياض",
+                surveyNotes: "التركيز على مهارات استيعاب المقروء وزيادة تدريبات مسائل السرعة والمسافة.",
+                surveyDifficulties: "المقارنات الهندسية في القدرات، وحسابات الكيمياء العضوية في التحصيلي."
+            },
+            students: [
+                { id: "1", name: "أحمد بن محمد القحطاني", grade: "ثاني ثانوي - عام", nationalId: "1104589211", accountStatus: "مكتمل", bookingStatus: "مؤكد ومسدد", examDate: "2026-11-15", attendance: "حاضر", officialScore: 84, preScore1: 30, preScore2: 28, postScore1: 42, postScore2: 44, weakness: "التناظر اللفظي ومسائل الأعمار" },
+                { id: "2", name: "خالد بن عبدالله الشمري", grade: "ثاني ثانوي - علوم حاسب", nationalId: "1119854722", accountStatus: "مكتمل", bookingStatus: "بانتظار السداد", examDate: "2026-11-20", attendance: "بانتظار الموعد", officialScore: null, preScore1: 22, preScore2: 26, postScore1: 32, postScore2: 30, weakness: "استيعاب المقروء والكسور" },
+                { id: "3", name: "سعد بن علي الدوسري", grade: "ثالث ثانوي - صحة وحياة", nationalId: "1124589933", accountStatus: "مكتمل", bookingStatus: "مؤكد ومسدد", examDate: "2026-11-18", attendance: "حاضر", officialScore: 91, preScore1: 38, preScore2: 40, postScore1: 46, postScore2: 47, weakness: "الفيزياء النووية" },
+                { id: "4", name: "سلطان بن فهد العتيبي", grade: "ثاني ثانوي - عام", nationalId: "1138541299", accountStatus: "مكتمل", bookingStatus: "مؤكد ومسدد", examDate: "2026-11-12", attendance: "حاضر", officialScore: 61, preScore1: 20, preScore2: 22, postScore1: 28, postScore2: 30, weakness: "الهندسة وحل المعادلات" },
+                { id: "5", name: "ريان بن ماجد المطيري", grade: "ثالث ثانوي - عام", nationalId: "1147852366", accountStatus: "غير مكتمل", bookingStatus: "لم يسجل بعد", examDate: "", attendance: "بانتظار الموعد", officialScore: null, preScore1: 24, preScore2: 25, postScore1: 31, postScore2: 33, weakness: "الكيمياء العامة والموجات" },
+                { id: "6", name: "فيصل بن سعد العمري", grade: "ثاني ثانوي - صحة وحياة", nationalId: "1159632144", accountStatus: "مكتمل", bookingStatus: "مؤكد ومسدد", examDate: "2026-11-25", attendance: "بانتظار الموعد", officialScore: null, preScore1: 35, preScore2: 32, postScore1: 44, postScore2: 43, weakness: "الخطأ السياقي" }
+            ],
+            trainingQudrat: [
+                { id: "q1", time: "الأحد (حصة النشاط)", type: "قدرات (كمي)", skill: "الكسور والنسب المئوية والربح والخسارة", teacher: "أ. ماجد العتيبي (رياضيات)", evidence: "ورقة حل 15 مسألة سريعة" },
+                { id: "q2", time: "الإثنين (حصة 4)", type: "قدرات (لفظي)", skill: "التناظر اللفظي واستراتيجيات بناء العلاقة", teacher: "أ. صالح القرني (عربية)", evidence: "بنك مصطلحات واختبار دقيقتين" },
+                { id: "q3", time: "الثلاثاء (حصة النشاط)", type: "قدرات (كمي)", skill: "الهندسة والمقارنات والزوايا والدائرة", teacher: "أ. حازم الأحمدي (رياضيات)", evidence: "نماذج أسئلة استبعاد الخيارات" },
+                { id: "q4", time: "الأربعاء (حصة 3)", type: "قدرات (لفظي)", skill: "استيعاب المقروء واكتشاف الخطأ السياقي", teacher: "أ. فهد الشريف (عربية)", evidence: "تطبيق على 4 نصوص مطولة" },
+                { id: "q5", time: "الخميس (طابور ونشاط)", type: "محاكاة شاملة", skill: "اختبار تجريبي رقمي مصغر (25 دقيقة)", teacher: "منسق القياس + المناوبين", evidence: "رصد درجات منصة Google Forms" }
+            ],
+            trainingTahsili: [
+                { id: "t1", week: "الأسبوع 1", math: "الدوال واللوغاريتمات", physics: "علم الحركة والمقذوفات", chemistry: "بنية الذرة والجدول الدوري", biology: "علم البيئة والجماعات الحيوية", evalMethod: "بطاقة خروج سريعة (5 أسئلة)" },
+                { id: "t2", week: "الأسبوع 2", math: "المتجهات والمصفوفات", physics: "قوانين نيوتن والجاذبية", chemistry: "الحسابات الكيميائية والروابط", biology: "تركيب الخلية والتنفس الخلوي", evalMethod: "ورقة عمل تجميعات مجمعة" },
+                { id: "t3", week: "الأسبوع 3", math: "حساب المثلثات والتحويلات", physics: "الموجات والصوت والديناميكا", chemistry: "حالات المادة وسرعة التفاعل", biology: "الوراثة الجزيئية ومندل", evalMethod: "بنك أسئلة رقمي عبر مدرستي" },
+                { id: "t4", week: "الأسبوع 4", math: "التفاضل والتكامل والإحصاء", physics: "الكهرباء والمغناطيسية والكم", chemistry: "الأحماض والقواعد والاتزان", biology: "أجهزة جسم الإنسان والتنوع", evalMethod: "محاكاة شاملة للاختبار الفعلي" }
+            ],
+            remedials: [
+                { id: "r1", name: "سلطان بن فهد العتيبي", grade: "ثاني ثانوي / 2", prevScore: 58, weakness: "ضعف مفاهيم الجبر وقوانين الكسور", action: "تأسيس مفاهيمي مكثف + حل بطاقات ورقية يومية", teacher: "أ. ماجد العتيبي", afterScore: 72, status: "تحسن واجتاز الفجوة" },
+                { id: "r2", name: "ماجد بن خالد الزهراني", grade: "ثالث ثانوي / 1", prevScore: 61, weakness: "قوانين الميكانيكا ومعادلات الكيمياء", action: "التعلم بالأقران مع طالب متفوق خلال حصة النشاط", teacher: "أ. إبراهيم السالم", afterScore: null, status: "مستمر بالدعم" }
+            ],
+            surveyQuestions: [
+                { id: 1, text: "وضوح المادة العلمية وتغطيتها للمفاهيم الأساسية لاختبار قياس", v4: 45, v3: 12, v2: 2, v1: 1 },
+                { id: 2, text: "تمكن المعلم المدرب وقدرته على إيصال استراتيجيات الحل السريع", v4: 52, v3: 7, v2: 1, v1: 0 },
+                { id: 3, text: "جودة التجميعات والأسئلة ومحاكاتها للاختبارات الرسمية", v4: 48, v3: 10, v2: 2, v1: 0 },
+                { id: 4, text: "ملاءمة أوقات التدريب وحصص النشاط المنفذة", v4: 38, v3: 15, v2: 5, v1: 2 },
+                { id: 5, text: "مدى مساهمة الاختبارات التجريبية في كسر حاجز الرهبة وإدارة الوقت", v4: 50, v3: 8, v2: 2, v1: 0 },
+                { id: 6, text: "التقييم العام لمدى رفع ثقة الطالب بنفسه لدخول الاختبار", v4: 49, v3: 9, v2: 2, v1: 0 }
+            ]
+        };
+
+        // متغير الحالة العامل
+        let appData = {};
+
+        // تحميل البيانات من localStorage أو الافتراضي
+        function initApp() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    appData = JSON.parse(stored);
+                } else {
+                    appData = JSON.parse(JSON.stringify(defaultAppData));
+                }
+            } catch (e) {
+                appData = JSON.parse(JSON.stringify(defaultAppData));
+            }
+
+            // تطبيق البيانات على الواجهة
+            populateMeta();
+            renderStudentsTable();
+            renderScoresTable();
+            renderTrainingTables();
+            renderRemedialTable();
+            renderSurveyTable();
+            updateKPIs();
+
+            // ضبط تاريخ الطباعة الحالي
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+            const dateEl = document.getElementById('printDate');
+            if (dateEl) dateEl.innerText = dateStr;
+
+            // إعداد رابط المشاركة
+            const shareInput = document.getElementById('shareUrlInput');
+            if (shareInput) shareInput.value = window.location.href;
+        }
+
+        // حفظ بالـ LocalStorage
+        function saveToStorage(silent = false) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+                if (!silent) showToast("تم حفظ جميع التعديلات في السجل بنجاح!");
+            } catch (err) {
+                showToast("تعذر الحفظ محلياً!", true);
+            }
+        }
+
+        // عرض إشعار مؤقت Toast
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = msg;
+            if (isError) {
+                toastIcon.className = "fa-solid fa-triangle-exclamation text-rose-400 text-xl";
+            } else {
+                toastIcon.className = "fa-solid fa-check-circle text-emerald-400 text-xl";
+            }
+
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-[-20px]');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 3000);
+        }
+
+        // التبديل بين التبويبات
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-brand-600', 'text-brand-600', 'font-bold');
+                btn.classList.add('border-transparent', 'text-slate-500', 'font-semibold');
+            });
+
+            const activePanel = document.getElementById(tabId);
+            if (activePanel) activePanel.classList.remove('hidden');
+
+            const activeBtn = document.getElementById('btn_' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'border-brand-600', 'text-brand-600', 'font-bold');
+                activeBtn.classList.remove('border-transparent', 'text-slate-500', 'font-semibold');
+            }
+        }
+
+        // تحديث البيانات الوصفية (المدرسة، المنسق...)
+        function populateMeta() {
+            document.getElementById('meta_school').value = appData.meta.school || '';
+            document.getElementById('meta_coordinator').value = appData.meta.coordinator || '';
+            document.getElementById('meta_principal').value = appData.meta.principal || '';
+            document.getElementById('meta_office').value = appData.meta.office || '';
+            
+            document.getElementById('sign_coordinator').innerText = appData.meta.coordinator || '';
+            document.getElementById('sign_principal').innerText = appData.meta.principal || '';
+            document.getElementById('printSchoolInfo').innerText = 'المدرسة: ' + (appData.meta.school || '');
+
+            const notesEl = document.getElementById('survey_notes');
+            const diffEl = document.getElementById('survey_difficulties');
+            if (notesEl) notesEl.value = appData.meta.surveyNotes || '';
+            if (diffEl) diffEl.value = appData.meta.surveyDifficulties || '';
+        }
+
+        function updateMeta() {
+            appData.meta.school = document.getElementById('meta_school').value;
+            appData.meta.coordinator = document.getElementById('meta_coordinator').value;
+            appData.meta.principal = document.getElementById('meta_principal').value;
+            appData.meta.office = document.getElementById('meta_office').value;
+
+            document.getElementById('sign_coordinator').innerText = appData.meta.coordinator;
+            document.getElementById('sign_principal').innerText = appData.meta.principal;
+            document.getElementById('printSchoolInfo').innerText = 'المدرسة: ' + appData.meta.school;
+
+            saveToStorage(true);
+        }
+
+        function saveSurveyMeta() {
+            appData.meta.surveyNotes = document.getElementById('survey_notes').value;
+            appData.meta.surveyDifficulties = document.getElementById('survey_difficulties').value;
+            saveToStorage(true);
+        }
+
+        // =================== جدول الطلاب ومتابعة الحضور ===================
+        function renderStudentsTable() {
+            const tbody = document.getElementById('students_tbody');
+            const search = (document.getElementById('search_students').value || '').trim().toLowerCase();
+            tbody.innerHTML = '';
+
+            const filtered = appData.students.filter(s => {
+                return s.name.toLowerCase().includes(search) || (s.nationalId && s.nationalId.includes(search));
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center py-6 text-slate-400">لا توجد نتائج مطابقة</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                
+                // شارة حالة الحساب
+                let accBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${student.accountStatus === 'مكتمل' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${student.accountStatus}</span>`;
+                
+                // شارة الحجز
+                let bookBadgeClass = 'bg-slate-100 text-slate-700';
+                if (student.bookingStatus === 'مؤكد ومسدد') bookBadgeClass = 'bg-emerald-100 text-emerald-800';
+                if (student.bookingStatus === 'بانتظار السداد') bookBadgeClass = 'bg-sky-100 text-sky-800';
+                if (student.bookingStatus === 'متعثر مالي') bookBadgeClass = 'bg-rose-100 text-rose-800';
+                let bookBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${bookBadgeClass}">${student.bookingStatus}</span>`;
+
+                tr.innerHTML = `
+                    <td class="p-3 font-mono text-slate-400">${index + 1}</td>
+                    <td class="p-3 font-bold text-slate-800">${student.name}</td>
+                    <td class="p-3 text-slate-600">${student.grade}</td>
+                    <td class="p-3 font-mono text-slate-600">${student.nationalId}</td>
+                    <td class="p-3">${accBadge}</td>
+                    <td class="p-3">${bookBadge}</td>
+                    <td class="p-3 font-mono">${student.examDate || '<span class="text-slate-400">لم يحدد</span>'}</td>
+                    <td class="p-3">
+                        <select onchange="updateStudentAttendance('${student.id}', this.value)" class="bg-transparent border border-slate-200 rounded px-1.5 py-0.5 text-[11px] focus:outline-none">
+                            <option value="بانتظار الموعد" ${student.attendance === 'بانتظار الموعد' ? 'selected' : ''}>بانتظار الموعد</option>
+                            <option value="حاضر" ${student.attendance === 'حاضر' ? 'selected' : ''}>حاضر ومؤدي</option>
+                            <option value="غائب بعذر" ${student.attendance === 'غائب بعذر' ? 'selected' : ''}>غائب بعذر</option>
+                            <option value="غائب بدون عذر" ${student.attendance === 'غائب بدون عذر' ? 'selected' : ''}>غائب بدون عذر</option>
+                        </select>
+                    </td>
+                    <td class="p-3 font-bold text-center">
+                        <input type="number" min="0" max="100" value="${student.officialScore !== null ? student.officialScore : ''}" placeholder="-" onchange="updateOfficialScore('${student.id}', this.value)" class="w-14 text-center font-mono font-bold p-1 rounded border border-slate-200 bg-white focus:border-brand-500 focus:outline-none">
+                    </td>
+                    <td class="p-3 no-print">
+                        <button onclick="deleteStudent('${student.id}')" title="حذف الطالب" class="text-slate-400 hover:text-rose-600 p-1 transition">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateStudentAttendance(id, val) {
+            const s = appData.students.find(x => x.id === id);
+            if (s) {
+                s.attendance = val;
+                saveToStorage(true);
+                updateKPIs();
+            }
+        }
+
+        function updateOfficialScore(id, val) {
+            const s = appData.students.find(x => x.id === id);
+            if (s) {
+                s.officialScore = val === '' ? null : Number(val);
+                saveToStorage(true);
+                updateKPIs();
+            }
+        }
+
+        function deleteStudent(id) {
+            if (confirm("هل أنت متأكد من حذف هذا الطالب من السجل؟")) {
+                appData.students = appData.students.filter(x => x.id !== id);
+                renderStudentsTable();
+                renderScoresTable();
+                updateKPIs();
+                saveToStorage();
+            }
+        }
+
+        function openAddStudentModal() {
+            document.getElementById('modal_student').classList.remove('hidden');
+        }
+
+        function saveNewStudent(e) {
+            e.preventDefault();
+            const newStu = {
+                id: 'stu_' + Date.now(),
+                name: document.getElementById('stu_name').value.trim(),
+                grade: document.getElementById('stu_grade').value,
+                nationalId: document.getElementById('stu_id').value.trim(),
+                accountStatus: document.getElementById('stu_acc_status').value,
+                bookingStatus: document.getElementById('stu_booking_status').value,
+                examDate: document.getElementById('stu_date').value,
+                attendance: document.getElementById('stu_attendance').value,
+                officialScore: document.getElementById('stu_official_score').value ? Number(document.getElementById('stu_official_score').value) : null,
+                preScore1: 25,
+                preScore2: 25,
+                postScore1: 35,
+                postScore2: 35,
+                weakness: "يحتاج تقييم تشخيصي"
+            };
+
+            appData.students.unshift(newStu);
+            closeModal('modal_student');
+            renderStudentsTable();
+            renderScoresTable();
+            updateKPIs();
+            saveToStorage();
+            e.target.reset();
+            showToast("تمت إضافة الطالب للسجل بنجاح");
+        }
+
+        // =================== جدول الدرجات والقياس القبلي/البعدي ===================
+        function renderScoresTable() {
+            const tbody = document.getElementById('scores_tbody');
+            tbody.innerHTML = '';
+
+            appData.students.forEach((s, idx) => {
+                const preTotal = (Number(s.preScore1) || 0) + (Number(s.preScore2) || 0);
+                const postTotal = (Number(s.postScore1) || 0) + (Number(s.postScore2) || 0);
+                const diff = postTotal - preTotal;
+                const diffClass = diff >= 0 ? 'text-emerald-600 font-bold' : 'text-rose-600 font-bold';
+                const sign = diff > 0 ? '+' : '';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-mono text-slate-400">${idx + 1}</td>
+                    <td class="p-3 font-bold text-slate-800">${s.name}</td>
+                    <td class="p-3 text-center">
+                        <input type="number" min="0" max="50" value="${s.preScore1}" onchange="updateScoreVal('${s.id}', 'preScore1', this.value)" class="w-12 text-center p-1 rounded border border-slate-200 text-xs">
+                    </td>
+                    <td class="p-3 text-center">
+                        <input type="number" min="0" max="50" value="${s.preScore2}" onchange="updateScoreVal('${s.id}', 'preScore2', this.value)" class="w-12 text-center p-1 rounded border border-slate-200 text-xs">
+                    </td>
+                    <td class="p-3 text-center bg-slate-50 font-bold font-mono text-slate-700">${preTotal}%</td>
+                    <td class="p-3 text-center">
+                        <input type="number" min="0" max="50" value="${s.postScore1}" onchange="updateScoreVal('${s.id}', 'postScore1', this.value)" class="w-12 text-center p-1 rounded border border-slate-200 text-xs">
+                    </td>
+                    <td class="p-3 text-center">
+                        <input type="number" min="0" max="50" value="${s.postScore2}" onchange="updateScoreVal('${s.id}', 'postScore2', this.value)" class="w-12 text-center p-1 rounded border border-slate-200 text-xs">
+                    </td>
+                    <td class="p-3 text-center bg-brand-50/60 font-black font-mono text-brand-900">${postTotal}%</td>
+                    <td class="p-3 text-center font-mono ${diffClass}">${sign}${diff}%</td>
+                    <td class="p-3">
+                        <input type="text" value="${s.weakness || ''}" onchange="updateScoreVal('${s.id}', 'weakness', this.value)" placeholder="رصد المهارة..." class="w-full p-1 rounded border border-slate-200 text-xs">
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateScoreVal(id, field, val) {
+            const s = appData.students.find(x => x.id === id);
+            if (s) {
+                if (field === 'weakness') {
+                    s[field] = val;
+                } else {
+                    s[field] = Number(val) || 0;
+                }
+                saveToStorage(true);
+                renderScoresTable();
+                updateKPIs();
+            }
+        }
+
+        // =================== جدول البرامج التدريبية ===================
+        function renderTrainingTables() {
+            // قدرات
+            const qTbody = document.getElementById('training_qudrat_tbody');
+            qTbody.innerHTML = '';
+            appData.trainingQudrat.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-800"><input type="text" value="${item.time}" onchange="updateQudratRow('${item.id}', 'time', this.value)" class="w-full bg-transparent"></td>
+                    <td class="p-3 text-brand-700 font-semibold"><input type="text" value="${item.type}" onchange="updateQudratRow('${item.id}', 'type', this.value)" class="w-full bg-transparent"></td>
+                    <td class="p-3"><input type="text" value="${item.skill}" onchange="updateQudratRow('${item.id}', 'skill', this.value)" class="w-full bg-transparent"></td>
+                    <td class="p-3 text-slate-600"><input type="text" value="${item.teacher}" onchange="updateQudratRow('${item.id}', 'teacher', this.value)" class="w-full bg-transparent"></td>
+                    <td class="p-3"><input type="text" value="${item.evidence}" onchange="updateQudratRow('${item.id}', 'evidence', this.value)" class="w-full bg-transparent text-slate-500"></td>
+                    <td class="p-3 no-print"><button onclick="deleteTrainingRow('qudrat', '${item.id}')" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                `;
+                qTbody.appendChild(tr);
+            });
+
+            // تحصيلي
+            const tTbody = document.getElementById('training_tahsili_tbody');
+            tTbody.innerHTML = '';
+            appData.trainingTahsili.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-800"><input type="text" value="${item.week}" onchange="updateTahsiliRow('${item.id}', 'week', this.value)" class="w-full bg-transparent"></td>
+                    <td class="p-3 text-blue-700"><input type="text" value="${item.math}" onchange="updateTahsiliRow('${item.id}', 'math', this.value)" class="w-full bg-transparent"></td>
+                    <td class="p-3 text-purple-700"><input type="text" value="${item.physics}" onchange="updateTahsiliRow('${item.id}', 'physics', this.value)" class="w-full bg-transparent"></td>
+                    <td class="p-3 text-amber-700"><input type="text" value="${item.chemistry}" onchange="updateTahsiliRow('${item.id}', 'chemistry', this.value)" class="w-full bg-transparent"></td>
+                    <td class="p-3 text-emerald-700"><input type="text" value="${item.biology}" onchange="updateTahsiliRow('${item.id}', 'biology', this.value)" class="w-full bg-transparent"></td>
+                    <td class="p-3"><input type="text" value="${item.evalMethod}" onchange="updateTahsiliRow('${item.id}', 'evalMethod', this.value)" class="w-full bg-transparent text-slate-500"></td>
+                    <td class="p-3 no-print"><button onclick="deleteTrainingRow('tahsili', '${item.id}')" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button></td>
+                `;
+                tTbody.appendChild(tr);
+            });
+        }
+
+        function updateQudratRow(id, field, val) {
+            const item = appData.trainingQudrat.find(x => x.id === id);
+            if (item) { item[field] = val; saveToStorage(true); }
+        }
+
+        function updateTahsiliRow(id, field, val) {
+            const item = appData.trainingTahsili.find(x => x.id === id);
+            if (item) { item[field] = val; saveToStorage(true); }
+        }
+
+        function addTrainingRow(type) {
+            if (type === 'qudrat') {
+                appData.trainingQudrat.push({
+                    id: 'q_' + Date.now(),
+                    time: "موعد جديد",
+                    type: "قدرات",
+                    skill: "مهارة مستهدفة",
+                    teacher: "معلم المادة",
+                    evidence: "ورقة عمل"
+                });
+            } else {
+                appData.trainingTahsili.push({
+                    id: 't_' + Date.now(),
+                    week: "الأسبوع " + (appData.trainingTahsili.length + 1),
+                    math: "موضوع رياضيات",
+                    physics: "موضوع فيزياء",
+                    chemistry: "موضوع كيمياء",
+                    biology: "موضوع أحياء",
+                    evalMethod: "اختبار تجريبي"
+                });
+            }
+            renderTrainingTables();
+            saveToStorage();
+        }
+
+        function deleteTrainingRow(type, id) {
+            if (confirm("هل ترغب في حذف هذا البند من جدول التدريب؟")) {
+                if (type === 'qudrat') {
+                    appData.trainingQudrat = appData.trainingQudrat.filter(x => x.id !== id);
+                } else {
+                    appData.trainingTahsili = appData.trainingTahsili.filter(x => x.id !== id);
+                }
+                renderTrainingTables();
+                saveToStorage();
+            }
+        }
+
+        // =================== جدول الخطة العلاجية ===================
+        function renderRemedialTable() {
+            const tbody = document.getElementById('remedial_tbody');
+            tbody.innerHTML = '';
+
+            appData.remedials.forEach((r, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-800">${r.name}</td>
+                    <td class="p-3 text-slate-600">${r.grade}</td>
+                    <td class="p-3 font-mono font-bold text-rose-600">${r.prevScore}%</td>
+                    <td class="p-3 text-slate-700">${r.weakness}</td>
+                    <td class="p-3 text-xs text-slate-600">${r.action}</td>
+                    <td class="p-3 text-slate-700 font-medium">${r.teacher}</td>
+                    <td class="p-3 text-center font-bold">
+                        <input type="number" min="0" max="100" value="${r.afterScore !== null ? r.afterScore : ''}" placeholder="-" onchange="updateRemedialAfterScore('${r.id}', this.value)" class="w-14 text-center font-mono font-bold p-1 rounded border border-slate-200 bg-white">
+                    </td>
+                    <td class="p-3">
+                        <select onchange="updateRemedialStatus('${r.id}', this.value)" class="bg-transparent border border-slate-200 rounded px-1.5 py-0.5 text-[11px]">
+                            <option value="مستمر بالدعم" ${r.status === 'مستمر بالدعم' ? 'selected' : ''}>مستمر بالدعم</option>
+                            <option value="تحسن واجتاز الفجوة" ${r.status === 'تحسن واجتاز الفجوة' ? 'selected' : ''}>تحسن واجتاز الفجوة</option>
+                            <option value="يحتاج تحويل للإرشاد" ${r.status === 'يحتاج تحويل للإرشاد' ? 'selected' : ''}>يحتاج تحويل للإرشاد</option>
+                        </select>
+                    </td>
+                    <td class="p-3 no-print">
+                        <button onclick="deleteRemedial('${r.id}')" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateRemedialAfterScore(id, val) {
+            const item = appData.remedials.find(x => x.id === id);
+            if (item) {
+                item.afterScore = val === '' ? null : Number(val);
+                if (item.afterScore >= 65) {
+                    item.status = 'تحسن واجتاز الفجوة';
+                }
+                saveToStorage(true);
+                renderRemedialTable();
+                updateKPIs();
+            }
+        }
+
+        function updateRemedialStatus(id, val) {
+            const item = appData.remedials.find(x => x.id === id);
+            if (item) {
+                item.status = val;
+                saveToStorage(true);
+            }
+        }
+
+        function deleteRemedial(id) {
+            if (confirm("هل ترغب في حذف هذا الطالب من خطة الدعم العلاجي؟")) {
+                appData.remedials = appData.remedials.filter(x => x.id !== id);
+                renderRemedialTable();
+                updateKPIs();
+                saveToStorage();
+            }
+        }
+
+        function openAddRemedialModal() {
+            document.getElementById('modal_remedial').classList.remove('hidden');
+        }
+
+        function saveNewRemedial(e) {
+            e.preventDefault();
+            const newRem = {
+                id: 'rem_' + Date.now(),
+                name: document.getElementById('rem_name').value.trim(),
+                grade: document.getElementById('rem_grade').value.trim(),
+                prevScore: Number(document.getElementById('rem_prev_score').value),
+                weakness: document.getElementById('rem_weakness').value.trim(),
+                action: document.getElementById('rem_action').value,
+                teacher: document.getElementById('rem_teacher').value.trim(),
+                afterScore: document.getElementById('rem_after_score').value ? Number(document.getElementById('rem_after_score').value) : null,
+                status: "مستمر بالدعم"
+            };
+
+            appData.remedials.unshift(newRem);
+            closeModal('modal_remedial');
+            renderRemedialTable();
+            updateKPIs();
+            saveToStorage();
+            e.target.reset();
+            showToast("تم إدراج الطالب بالخطة العلاجية بنجاح");
+        }
+
+        // =================== جدول استبانة الرضا ===================
+        function renderSurveyTable() {
+            const tbody = document.getElementById('survey_tbody');
+            tbody.innerHTML = '';
+
+            let totalWeighted = 0;
+            let totalMaxWeighted = 0;
+
+            appData.surveyQuestions.forEach((q, idx) => {
+                const totalVotes = (Number(q.v4) || 0) + (Number(q.v3) || 0) + (Number(q.v2) || 0) + (Number(q.v1) || 0);
+                const score = (q.v4 * 4) + (q.v3 * 3) + (q.v2 * 2) + (q.v1 * 1);
+                const maxScore = totalVotes * 4;
+                const ratio = maxScore > 0 ? ((score / maxScore) * 100).toFixed(1) : '0';
+
+                totalWeighted += score;
+                totalMaxWeighted += maxScore;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-mono text-slate-400">${idx + 1}</td>
+                    <td class="p-3 font-semibold text-slate-800">${q.text}</td>
+                    <td class="p-3 text-center"><input type="number" min="0" value="${q.v4}" onchange="updateSurveyVotes(${q.id}, 'v4', this.value)" class="w-12 text-center p-1 rounded border border-slate-200"></td>
+                    <td class="p-3 text-center"><input type="number" min="0" value="${q.v3}" onchange="updateSurveyVotes(${q.id}, 'v3', this.value)" class="w-12 text-center p-1 rounded border border-slate-200"></td>
+                    <td class="p-3 text-center"><input type="number" min="0" value="${q.v2}" onchange="updateSurveyVotes(${q.id}, 'v2', this.value)" class="w-12 text-center p-1 rounded border border-slate-200"></td>
+                    <td class="p-3 text-center"><input type="number" min="0" value="${q.v1}" onchange="updateSurveyVotes(${q.id}, 'v1', this.value)" class="w-12 text-center p-1 rounded border border-slate-200"></td>
+                    <td class="p-3 text-center font-bold text-brand-700">${ratio}%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const overall = totalMaxWeighted > 0 ? ((totalWeighted / totalMaxWeighted) * 100).toFixed(1) + '%' : '0%';
+            document.getElementById('survey_overall_score').innerText = overall;
+        }
+
+        function updateSurveyVotes(qid, field, val) {
+            const q = appData.surveyQuestions.find(x => x.id === qid);
+            if (q) {
+                q[field] = Number(val) || 0;
+                saveToStorage(true);
+                renderSurveyTable();
+            }
+        }
+
+        // =================== تحديث المؤشرات الرقمية الحية ===================
+        function updateKPIs() {
+            const total = appData.students.length;
+            document.getElementById('kpi_total_students').innerText = total;
+
+            // نسبة إكمال التسجيل
+            const registered = appData.students.filter(s => s.accountStatus === 'مكتمل').length;
+            const regPercent = total > 0 ? Math.round((registered / total) * 100) : 0;
+            document.getElementById('kpi_reg_ratio').innerText = `${regPercent}% مسجلون رسمياً`;
+
+            // متوسط درجات البعدي
+            let postSum = 0;
+            let preSum = 0;
+            let countScores = 0;
+            let atRiskCount = 0;
+
+            appData.students.forEach(s => {
+                const post = (Number(s.postScore1) || 0) + (Number(s.postScore2) || 0);
+                const pre = (Number(s.preScore1) || 0) + (Number(s.preScore2) || 0);
+                postSum += post;
+                preSum += pre;
+                countScores++;
+
+                // حساب الطلاب تحت الخطر
+                if (post < 65 || (s.officialScore !== null && s.officialScore < 65)) {
+                    atRiskCount++;
+                }
+            });
+
+            const avgPost = countScores > 0 ? Math.round(postSum / countScores) : 0;
+            const avgPre = countScores > 0 ? Math.round(preSum / countScores) : 0;
+            const improve = avgPost - avgPre;
+
+            document.getElementById('kpi_avg_score').innerText = `${avgPost}%`;
+            document.getElementById('kpi_improvement').innerText = (improve >= 0 ? '+' : '') + `${improve}%`;
+            document.getElementById('kpi_at_risk').innerText = Math.max(atRiskCount, appData.remedials.length);
+        }
+
+        // =================== نوافذ منبثقة، تصدير، استيراد، مشاركة ===================
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `سجل_منسق_القدرات_والتحصيلي_${new Date().toISOString().slice(0, 10)}.json`);
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+            showToast("تم تحميل ملف البيانات بنجاح");
+        }
+
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed && parsed.students && parsed.meta) {
+                        appData = parsed;
+                        saveToStorage(true);
+                        populateMeta();
+                        renderStudentsTable();
+                        renderScoresTable();
+                        renderTrainingTables();
+                        renderRemedialTable();
+                        renderSurveyTable();
+                        updateKPIs();
+                        showToast("تم استيراد البيانات وتحديث السجل بنجاح!");
+                    } else {
+                        showToast("الملف لا يحتوي على هيكل بيانات صحيح", true);
+                    }
+                } catch (err) {
+                    showToast("حدث خطأ أثناء قراءة الملف", true);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function shareLinkModal() {
+            document.getElementById('shareUrlInput').value = window.location.href;
+            document.getElementById('modal_share').classList.remove('hidden');
+        }
+
+        function copyShareLink() {
+            const input = document.getElementById('shareUrlInput');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            try {
+                document.execCommand('copy');
+                showToast("تم نسخ الرابط للحافظة بنجاح!");
+            } catch (err) {
+                showToast("يرجى نسخ الرابط يدوياً", true);
+            }
+        }
+
+        function resetDefaultData() {
+            if (confirm("هل تريد استعادة البيانات الافتراضية الأولية؟ سيتم مسح أي تعديلات غير محفوظة خارجياً.")) {
+                appData = JSON.parse(JSON.stringify(defaultAppData));
+                saveToStorage();
+                populateMeta();
+                renderStudentsTable();
+                renderScoresTable();
+                renderTrainingTables();
+                renderRemedialTable();
+                renderSurveyTable();
+                updateKPIs();
+                showToast("تمت استعادة البيانات الافتراضية");
+            }
+        }
+
+        // تشغيل التهيئة عند تحميل النافذة
+        window.onload = function() {
+            initApp();
+        };
+    </script>
+</body>
+</html>
